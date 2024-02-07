@@ -1,9 +1,10 @@
 #!/bin/bash
 
+AUDIO_CODEC_ACC="aac"
+AUDIO_CODEC_PCM_S16="pcm_s16le"
 OUT_DIR="h265"
 FORMAT="MOV"
-# AUDIO_CODEC="pcm_s16le"
-AUDIO_CODEC="aac"
+AUDIO_CODEC=$AUDIO_CODEC_ACC
 mkdir -p "${OUT_DIR}"
 
 total=$(find . -maxdepth 1 -type f -name '*${FORMAT}' | wc -l)
