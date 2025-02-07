@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# This script converts video files (.MOV) to H.265/HEVC format. It
+# automatically detects the platform (Linux or macOS) and adjusts the FFmpeg
+# settings accordingly:
+# 
+#     Linux: Uses hevc_nvenc for hardware-accelerated encoding.
+#     macOS: Uses hevc_videotoolbox for hardware-accelerated encoding.
+# 
+# If the platform is unsupported, the script will exit with an error.
+# Usage
+# 
+#     ./to_h265.sh
+# 
+#     The converted files will be saved in the h265 directory.
+
 AUDIO_CODEC_ACC="libfdk_aac"
 AUDIO_CODEC_PCM_S16="pcm_s16le"
 OUT_DIR="h265"

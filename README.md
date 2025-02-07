@@ -45,6 +45,10 @@
 
 `$ ./to_pcm.sh`
 
+    Transcode audio file to AAC.
+
+`$ ./to_aac.sh`
+
     Generate proxy videos.
 
 `$ ./gen_proxy.sh`
