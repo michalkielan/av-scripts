@@ -44,7 +44,7 @@ Transcode audio file to AAC.
 
 `$ ./to_aac.sh`
 
-Generate proxy videos.
+Generate proxy videos for editing.
 
 `$ ./gen_proxy.sh`
 
