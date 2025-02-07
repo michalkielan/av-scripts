@@ -50,4 +50,4 @@ Generate proxy videos.
 
 
 ## License
-<link>
+[MIT](https://github.com/michalkielan/av-scripts/blob/master/LICENSE)
