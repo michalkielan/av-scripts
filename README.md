@@ -44,9 +44,13 @@ Transcode audio file to AAC.
 
 `$ ./to_aac.sh`
 
-Generate proxy videos.
+Generate proxy videos for editing.
 
 `$ ./gen_proxy.sh`
+
+Download audio from youtube video
+
+`$ ./yt_audio.sh`
 
 
 ## License
