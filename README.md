@@ -15,7 +15,7 @@ A collection of scripts designed to help with transcoding and manipulating audio
 ## Installation
 Clone the repository:
 
-`$ git clone https://github.com/michalkielan/cut-scripts.git`
+`$ git clone https://github.com/michalkielan/av-scripts.git`
 
 Navigate into the project directory:
 
