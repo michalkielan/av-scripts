@@ -19,9 +19,9 @@ do
   if ! ffmpeg \
         -hwaccel auto \
         -i "${input_file}" \
-        -c:v hevc_nvenc \
-        -preset slow \
-        -qp 18 \
+        -c:v av1_nvenc \
+        -preset p4 \
+        -rc vbr \
         -c:a ${AUDIO_CODEC} \
         -map_metadata 0 \
         -loglevel info \
