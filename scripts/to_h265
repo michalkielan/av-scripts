@@ -14,8 +14,7 @@
 # 
 #     The converted files will be saved in the h265 directory.
 
-AUDIO_CODEC_ACC="libfdk_aac"
-AUDIO_CODEC_PCM_S16="pcm_s16le"
+AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
 OUT_DIR="h265"
 FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_ACC
@@ -41,6 +40,19 @@ if ! is_encoder_supported "$VIDEO_CODEC"; then
     exit 1
 fi
 
+SELECTED_AUDIO_CODEC=""
+for codec in "${AUDIO_CODECS_ACC[@]}"; do
+    if is_encoder_supported "$codec"; then
+        SELECTED_AUDIO_CODEC="$codec"
+        break
+    fi
+done
+
+if [ -z "$SELECTED_AUDIO_CODEC" ]; then
+    echo "Error: No supported AAC encoder found."
+    exit 1
+fi
+
 total=$(find . -maxdepth 1 -type f -name "*.${FORMAT}" | wc -l)
 i=1
 mkdir -p "${OUT_DIR}"
@@ -57,7 +69,7 @@ do
         -i "${input_file}" \
         -c:v ${VIDEO_CODEC} \
         ${VIDEO_OPTIONS} \
-        -c:a ${AUDIO_CODEC} \
+        -c:a ${SELECTED_AUDIO_CODEC} \
         -b:a 320k \
         -map_metadata 0 \
         -loglevel info \
