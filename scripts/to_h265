@@ -17,7 +17,6 @@
 AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
 OUT_DIR="h265"
 FORMAT="MOV"
-AUDIO_CODEC=$AUDIO_CODEC_ACC
 
 source "$(dirname "$0")/utils.sh"
 
