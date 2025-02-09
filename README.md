@@ -52,6 +52,9 @@ Download audio from youtube video
 
 `$ ./yt_audio.sh`
 
+Separate vocal from audio file.
+
+`$ ./split_audio.sh`
 
 ## License
 [MIT](https://github.com/michalkielan/av-scripts/blob/master/LICENSE)
