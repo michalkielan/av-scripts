@@ -18,9 +18,7 @@
 
 AAC_CODECS=("libfdk_aac" "aac_at" "aac")
 
-is_encoder_supported() {
-    ffmpeg -encoders 2>/dev/null | grep -q " $1 "
-}
+source "$(dirname "$0")/utils.sh"
 
 SELECTED_CODEC=""
 for codec in "${AAC_CODECS[@]}"; do

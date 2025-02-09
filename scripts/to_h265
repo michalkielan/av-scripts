@@ -19,9 +19,7 @@ OUT_DIR="h265"
 FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_ACC
 
-is_encoder_supported() {
-    ffmpeg -encoders 2>/dev/null | grep -q " $1 "
-}
+source "$(dirname "$0")/utils.sh"
 
 PLATFORM=$(uname -s)
 if [[ "$PLATFORM" == "Linux" ]]; then
