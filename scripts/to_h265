@@ -15,6 +15,7 @@
 #     The converted files will be saved in the h265 directory.
 
 AUDIO_CODEC_ACC="libfdk_aac"
+AUDIO_CODEC_PCM_S16="pcm_s16le"
 OUT_DIR="h265"
 FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_ACC
@@ -46,7 +47,7 @@ do
         -hwaccel auto \
         -i "${input_file}" \
         -c:v ${VIDEO_CODEC} \
-        "${VIDEO_OPTIONS}" \
+        ${VIDEO_OPTIONS} \
         -c:a ${AUDIO_CODEC} \
         -b:a 320k \
         -map_metadata 0 \

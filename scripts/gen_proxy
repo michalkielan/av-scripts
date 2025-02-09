@@ -42,7 +42,7 @@ do
         -hwaccel auto \
         -i "${input_file}" \
         -c:v ${VIDEO_CODEC} \
-        "${VIDEO_OPTIONS}" \
+        ${VIDEO_OPTIONS} \
         -vf ${SCALE} \
         -c:a ${AUDIO_CODEC} \
         -map_metadata 0 \
