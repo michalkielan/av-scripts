@@ -28,6 +28,7 @@ A collection of scripts designed to help with transcoding and manipulating audio
 If using hardware-accelerated encoding, ensure that your system has an necessary GPU drivers installed.
 
 * Run the `bootstartp` script to configure `PATH`
+
 `$ bootstrap`
 
 ## Usage
