@@ -33,31 +33,31 @@ If using hardware-accelerated encoding, ensure that your system has an necessary
 ## Usage
 Transcode a video to H.265 using hardware encoder.
 
-`$ ./to_h265.sh`
+`$ to_h265`
 
 Transcode a video to AV1.
 
-`$ ./to_av1.sh`
+`$ to_av1`
 
 Export to PCM audio.
 
-`$ ./to_pcm.sh`
+`$ to_pcm`
 
 Transcode audio file to AAC.
 
-`$ ./to_aac.sh`
+`$ to_aac <audio file>`
 
 Generate proxy videos for editing.
 
-`$ ./gen_proxy.sh`
+`$ gen_proxy`
 
 Download audio from youtube video
 
-`$ ./yt_audio.sh`
+`$ yt_audio <youtube video link`
 
 Separate vocal from audio file.
 
-`$ ./split_audio.sh`
+`$ split_audio <audio file>`
 
 ## License
 [MIT](https://github.com/michalkielan/av-scripts/blob/master/LICENSE)
