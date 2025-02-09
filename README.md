@@ -13,19 +13,22 @@ A collection of scripts designed to help with transcoding and manipulating audio
 * CUDA-capable NVIDIA GPU or Apple silicon for hardware-accelerated transcoding.
 
 ## Installation
-Clone the repository:
+* Clone the repository:
 
 `$ git clone https://github.com/michalkielan/av-scripts.git`
 
-Navigate into the project directory:
+* Navigate into the project directory:
 
 `$ cd av-scripts`
 
-Ensure FFmpeg is installed:
+* Ensure FFmpeg is installed:
 
 `$ ffmpeg -version`
 
 If using hardware-accelerated encoding, ensure that your system has an necessary GPU drivers installed.
+
+* Run the `bootstartp` script to configure `PATH`
+`$ bootstrap`
 
 ## Usage
 Transcode a video to H.265 using hardware encoder.
