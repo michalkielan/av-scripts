@@ -9,28 +9,18 @@ A collection of scripts designed to help with transcoding and manipulating audio
 * Batch Processing: Automate and process multiple files simultaneously for large-scale media projects.
 
 ## Requirements
-* FFmpeg: Ensure FFmpeg is installed and available on your system.
+* FFmpeg: Ensure FFmpeg is installed and available on your system. If using hardware-accelerated encoding, ensure that your system has an necessary GPU drivers installed.
 * CUDA-capable NVIDIA GPU or Apple silicon for hardware-accelerated transcoding.
 
 ## Installation
 
-### Clone the repository:
+Clone repository, navigate into the project directory and run the `bootstrap` script to configure `PATH`
 
-`$ git clone https://github.com/michalkielan/av-scripts.git`
-
-### Navigate into the project directory:
-
-`$ cd av-scripts`
-
-### Ensure FFmpeg is installed:
-
-`$ ffmpeg -version`
-
-If using hardware-accelerated encoding, ensure that your system has an necessary GPU drivers installed.
-
-### Run the `bootstartp` script to configure `PATH`
-
-`$ bootstrap`
+```
+$ git clone https://github.com/michalkielan/av-scripts.git
+$ cd av-scripts
+$ bootstrap
+```
 
 ## Usage
 Transcode a video to H.265 using hardware encoder.
