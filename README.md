@@ -1,3 +1,5 @@
+[![tests](https://github.com/michalkielan/av-scripts/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/michalkielan/av-scripts/actions/workflows/build.yml)
+
 # av-scripts
 A collection of scripts designed to help with transcoding and manipulating audio and video files, useful for video editing tasks. Scripts written in bash leverages FFmpeg to process media files in various ways.
 
