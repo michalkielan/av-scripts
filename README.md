@@ -21,7 +21,7 @@ Clone repository, navigate into the project directory and run the `bootstrap` sc
 ```
 $ git clone https://github.com/michalkielan/av-scripts.git
 $ cd av-scripts
-$ bootstrap
+$ ./bootstrap
 ```
 
 ## Usage
