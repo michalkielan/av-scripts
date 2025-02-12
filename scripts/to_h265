@@ -52,14 +52,16 @@ fi
 
 total=$(find . -maxdepth 1 -type f -name "*.${FORMAT}" | wc -l)
 i=1
+N=4
 mkdir -p "${OUT_DIR}"
 
-for input_file in *.${FORMAT}
-do
+process_file() {
+  local input_file=$1
+  local random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
+  local out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${FORMAT}"
+  local out_file="${OUT_DIR}/${input_file}"
+
   echo "${input_file} ${i}/${total}"
-  random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
-  out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${FORMAT}"
-  out_file="${OUT_DIR}/${input_file}"
 
   if ! ffmpeg \
         -hwaccel auto \
@@ -69,12 +71,30 @@ do
         -c:a ${SELECTED_AUDIO_CODEC} \
         -b:a 320k \
         -map_metadata 0 \
-        -loglevel info \
+        -loglevel warning \
         "${out_file_tmp}"; then
-    echo "Error: ffmpeg failed"
+    echo "Error: ffmpeg failed for ${input_file}"
     exit 1
   fi
 
   mv "${out_file_tmp}" "${out_file}"
+}
+
+declare -a pids
+
+for input_file in *.${FORMAT}; do
+  process_file "${input_file}" &
   ((i++))
+  pids+=($!)
+
+  if (( ${#pids[@]} == N )); then
+    for pid in "${pids[@]}"; do
+      wait $pid || exit 1
+    done
+    pids=()
+  fi
+done
+
+for pid in "${pids[@]}"; do
+  wait $pid || exit 1
 done
