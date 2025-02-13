@@ -17,3 +17,4 @@ jobs:
       - name: Run Bats tests
         run: |
           bats tests/gen_mediainfo_test.bats
+          bats tests/to_aac_test.bats
