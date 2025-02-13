@@ -45,6 +45,10 @@ Generate proxy videos for editing.
 
 `$ gen_proxy`
 
+Generate media info for videos.
+
+`$ gen_mediainfo`
+
 Download audio from youtube video
 
 `$ yt_audio <youtube video link`

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# This script extracts metadata from video files (mp4, mov, mkv) in a specified directory
+# and saves the metadata in YAML format. The output YAML files will have the same name
+# as the input video files but with a .yaml  extension.
+#
+# Usage:
+#   ./gen_metadata.sh
+#
+# The script will use the current directory (.).
+#
+# Dependencies:
+#   - mediainfo
+
+DIR="${1:-.}"
+
+for file in "$DIR"/*; do
+	if [ -f "$file" ]; then
+		EXTENSION="${file##*.}"
+		FILENAME="${file%.*}"
+
+		case "$EXTENSION" in
+		mp4 | MP4 | mov | MOV | mkv | MKV)
+			if [[ "$EXTENSION" =~ [A-Z] ]]; then
+				output_file="${FILENAME}.YAML"
+			else
+				output_file="${FILENAME}.yaml"
+			fi
+
+			mediainfo --Output=YAML "$file" >"$output_file"
+			echo "Exported metadata for $file to $output_file"
+			;;
+		*)
+			continue
+			;;
+		esac
+	fi
+done
