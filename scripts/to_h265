@@ -16,7 +16,8 @@
 
 AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
 OUT_DIR="h265"
-FORMAT="MOV"
+IN_FORMAT="MOV"
+OUT_FORMAT="MKV"
 
 source "$(dirname "$0")/utils.sh"
 
@@ -57,16 +58,17 @@ if [ -z "$SELECTED_AUDIO_CODEC" ]; then
     exit 1
 fi
 
-total=$(find . -maxdepth 1 -type f -name "*.${FORMAT}" | wc -l)
+total=$(find . -maxdepth 1 -type f -name "*.${IN_FORMAT}" | wc -l)
 i=1
 mkdir -p "${OUT_DIR}"
 
-for input_file in *.${FORMAT}
+for input_file in *.${IN_FORMAT}
 do
   echo "${input_file} ${i}/${total}"
   random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
-  out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${FORMAT}"
-  out_file="${OUT_DIR}/${input_file}"
+  base_name="${input_file%.*}"
+  out_file_tmp="${OUT_DIR}/${base_name}${random_string}.tmp.${OUT_FORMAT}"
+  out_file="${OUT_DIR}/${base_name}.${OUT_FORMAT}"
 
   if ! ffmpeg \
         -nostdin \
