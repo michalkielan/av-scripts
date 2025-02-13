@@ -14,6 +14,7 @@
 #
 #     The converted files will be saved in the h265 directory.
 
+shopt -s nullglob
 AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
 OUT_DIR="h265"
 INPUT_FORMAT="MOV"
@@ -75,7 +76,6 @@ if [ -z "$SELECTED_AUDIO_CODEC" ]; then
 	exit 1
 fi
 
-shopt -s nullglob
 files=(*."${INPUT_FORMAT}")
 total=${#files[@]}
 

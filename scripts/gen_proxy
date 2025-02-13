@@ -10,6 +10,7 @@
 #
 #   The converted files will be saved in the 'proxy' directory.
 
+shopt -s nullglob
 AUDIO_CODEC_PCM_S16="pcm_s16le"
 OUT_DIR="proxy"
 FORMAT="MOV"
@@ -18,12 +19,19 @@ VIDEO_CODEC="prores_ks"
 VIDEO_OPTIONS="-profile:v 0"
 
 source "$(dirname "$0")/utils.sh"
+
+files=(*."${FORMAT}")
+total=${#files[@]}
+
+if [[ $total -eq 0 ]]; then
+	echo "Error: No files found with format '${FORMAT}'"
+	exit 1
+fi
+
+i=1
 mkdir -p "${OUT_DIR}"
 
-total=$(find . -maxdepth 1 -type f -name "*.${FORMAT}" | wc -l)
-i=1
-
-for input_file in *.${FORMAT}; do
+for input_file in "${files[@]}"; do
 	echo "${input_file} ${i}/${total}"
 	random_string=$(gen_random_string)
 	out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${FORMAT}"
