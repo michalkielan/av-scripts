@@ -9,6 +9,23 @@ generate_video() {
 		"$output_file"
 }
 
+setup() {
+	export ORIGINAL_DIR=$(pwd)
+	export TEMP_DIR=$(mktemp -d)
+	cd "$TEMP_DIR" || {
+		echo "Failed to change to temporary directory"
+		exit 1
+	}
+}
+
+teardown() {
+	cd "$ORIGINAL_DIR" || {
+		echo "Failed to change back to original directory"
+		exit 1
+	}
+	rm -rf "$TEMP_DIR"
+}
+
 @test "Test with no files in directory" {
 	run gen_mediainfo
 	[ "$status" -eq 0 ]
