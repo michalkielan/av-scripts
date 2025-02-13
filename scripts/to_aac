@@ -42,4 +42,4 @@ INPUT_FILE="$1"
 BASE_NAME="${INPUT_FILE%.*}"
 
 echo "Using encoder: $SELECTED_CODEC"
-ffmpeg -y -i "$INPUT_FILE" -c:a "$SELECTED_CODEC" -b:a 320k -map a:0 "$BASE_NAME.m4a"
+ffmpeg -nostdin -y -i "$INPUT_FILE" -c:a "$SELECTED_CODEC" -b:a 320k -map a:0 "$BASE_NAME.m4a"

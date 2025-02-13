@@ -18,6 +18,7 @@ AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
 OUT_DIR="h265"
 IN_FORMAT="MOV"
 OUT_FORMAT="MKV"
+VIDEO_HWACCEL="auto"
 
 source "$(dirname "$0")/utils.sh"
 
@@ -32,7 +33,6 @@ if [[ "$PLATFORM" == "Linux" ]]; then
     -spatial_aq 1 \
     -temporal_aq 1"
 elif [[ "$PLATFORM" == "Darwin" ]]; then
-	VIDEO_HWACCEL="auto"
 	VIDEO_CODEC="hevc_videotoolbox"
 	VIDEO_OPTIONS="-tag:v hvc1 -q:v 65"
 else
@@ -41,8 +41,9 @@ else
 fi
 
 if ! is_encoder_supported "$VIDEO_CODEC"; then
-	echo "Error: ${VIDEO_CODEC} not supported"
-	exit 1
+	echo "Error: '${VIDEO_CODEC}' not supported. Fallback to SW"
+	VIDEO_CODEC="libx265"
+	VIDEO_OPTIONS="-preset slow -crf 18"
 fi
 
 SELECTED_AUDIO_CODEC=""
