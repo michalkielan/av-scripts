@@ -62,6 +62,7 @@ do
   out_file="${OUT_DIR}/${input_file}"
 
   if ! ffmpeg \
+        -nostdin \
         -hwaccel auto \
         -i "${input_file}" \
         -c:v ${VIDEO_CODEC} \
