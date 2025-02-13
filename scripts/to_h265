@@ -22,9 +22,16 @@ source "$(dirname "$0")/utils.sh"
 
 PLATFORM=$(uname -s)
 if [[ "$PLATFORM" == "Linux" ]]; then
+  VIDEO_HWACCEL="cuda"
   VIDEO_CODEC="hevc_nvenc"
-  VIDEO_OPTIONS="-preset slow -qp 18"
+  VIDEO_OPTIONS="-preset slow \
+    -qp 18 \
+    -profile:v main10 \
+    -pix_fmt p010le \
+    -spatial_aq 1 \
+    -temporal_aq 1"
 elif [[ "$PLATFORM" == "Darwin" ]]; then
+  VIDEO_HWACCEL="auto"
   VIDEO_CODEC="hevc_videotoolbox"
   VIDEO_OPTIONS="-tag:v hvc1 -q:v 65"
 else
@@ -63,7 +70,7 @@ do
 
   if ! ffmpeg \
         -nostdin \
-        -hwaccel auto \
+        -hwaccel ${VIDEO_HWACCEL} \
         -i "${input_file}" \
         -c:v ${VIDEO_CODEC} \
         ${VIDEO_OPTIONS} \
