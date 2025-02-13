@@ -8,14 +8,14 @@
 #
 # The flac file will be saved in ~/Music directory.
 
-if ! command -v yt-dlp &> /dev/null; then
-    echo "Error: yt-dlp is not installed. Please install it first."
-    exit 1
+if ! command -v yt-dlp &>/dev/null; then
+	echo "Error: yt-dlp is not installed. Please install it first."
+	exit 1
 fi
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 <YouTube-link>"
-    exit 1
+	echo "Usage: $0 <YouTube-link>"
+	exit 1
 fi
 
 yt-dlp "$1" -f ba --extract-audio --audio-format flac -o "$HOME/Music/%(title)s.%(ext)s"

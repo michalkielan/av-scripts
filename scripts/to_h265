@@ -3,15 +3,15 @@
 # This script converts video files (.MOV) to H.265/HEVC format. It
 # automatically detects the platform (Linux or macOS) and adjusts the FFmpeg
 # settings accordingly:
-# 
+#
 #     Linux: Uses hevc_nvenc for hardware-accelerated encoding.
 #     macOS: Uses hevc_videotoolbox for hardware-accelerated encoding.
-# 
+#
 # If the platform is unsupported, the script will exit with an error.
 # Usage
-# 
+#
 #     ./to_h265.sh
-# 
+#
 #     The converted files will be saved in the h265 directory.
 
 AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
@@ -23,68 +23,67 @@ source "$(dirname "$0")/utils.sh"
 
 PLATFORM=$(uname -s)
 if [[ "$PLATFORM" == "Linux" ]]; then
-  VIDEO_HWACCEL="cuda"
-  VIDEO_CODEC="hevc_nvenc"
-  VIDEO_OPTIONS="-preset slow \
+	VIDEO_HWACCEL="cuda"
+	VIDEO_CODEC="hevc_nvenc"
+	VIDEO_OPTIONS="-preset slow \
     -qp 18 \
     -profile:v main10 \
     -pix_fmt p010le \
     -spatial_aq 1 \
     -temporal_aq 1"
 elif [[ "$PLATFORM" == "Darwin" ]]; then
-  VIDEO_HWACCEL="auto"
-  VIDEO_CODEC="hevc_videotoolbox"
-  VIDEO_OPTIONS="-tag:v hvc1 -q:v 65"
+	VIDEO_HWACCEL="auto"
+	VIDEO_CODEC="hevc_videotoolbox"
+	VIDEO_OPTIONS="-tag:v hvc1 -q:v 65"
 else
-  echo "Error: Unsupported platform - $PLATFORM"
-  exit 1
+	echo "Error: Unsupported platform - $PLATFORM"
+	exit 1
 fi
 
 if ! is_encoder_supported "$VIDEO_CODEC"; then
-    echo "Error: ${VIDEO_CODEC} not supported"
-    exit 1
+	echo "Error: ${VIDEO_CODEC} not supported"
+	exit 1
 fi
 
 SELECTED_AUDIO_CODEC=""
 for codec in "${AUDIO_CODECS_ACC[@]}"; do
-    if is_encoder_supported "$codec"; then
-        SELECTED_AUDIO_CODEC="$codec"
-        break
-    fi
+	if is_encoder_supported "$codec"; then
+		SELECTED_AUDIO_CODEC="$codec"
+		break
+	fi
 done
 
 if [ -z "$SELECTED_AUDIO_CODEC" ]; then
-    echo "Error: No supported AAC encoder found."
-    exit 1
+	echo "Error: No supported AAC encoder found."
+	exit 1
 fi
 
 total=$(find . -maxdepth 1 -type f -name "*.${IN_FORMAT}" | wc -l)
 i=1
 mkdir -p "${OUT_DIR}"
 
-for input_file in *.${IN_FORMAT}
-do
-  echo "${input_file} ${i}/${total}"
-  random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
-  base_name="${input_file%.*}"
-  out_file_tmp="${OUT_DIR}/${base_name}${random_string}.tmp.${OUT_FORMAT}"
-  out_file="${OUT_DIR}/${base_name}.${OUT_FORMAT}"
+for input_file in *.${IN_FORMAT}; do
+	echo "${input_file} ${i}/${total}"
+	random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
+	base_name="${input_file%.*}"
+	out_file_tmp="${OUT_DIR}/${base_name}${random_string}.tmp.${OUT_FORMAT}"
+	out_file="${OUT_DIR}/${base_name}.${OUT_FORMAT}"
 
-  if ! ffmpeg \
-        -nostdin \
-        -hwaccel ${VIDEO_HWACCEL} \
-        -i "${input_file}" \
-        -c:v ${VIDEO_CODEC} \
-        ${VIDEO_OPTIONS} \
-        -c:a ${SELECTED_AUDIO_CODEC} \
-        -b:a 320k \
-        -map_metadata 0 \
-        -loglevel warning \
-        "${out_file_tmp}"; then
-    echo "Error: ffmpeg failed"
-    exit 1
-  fi
+	if ! ffmpeg \
+		-nostdin \
+		-hwaccel ${VIDEO_HWACCEL} \
+		-i "${input_file}" \
+		-c:v ${VIDEO_CODEC} \
+		${VIDEO_OPTIONS} \
+		-c:a ${SELECTED_AUDIO_CODEC} \
+		-b:a 320k \
+		-map_metadata 0 \
+		-loglevel warning \
+		"${out_file_tmp}"; then
+		echo "Error: ffmpeg failed"
+		exit 1
+	fi
 
-  mv "${out_file_tmp}" "${out_file}"
-  ((i++))
+	mv "${out_file_tmp}" "${out_file}"
+	((i++))
 done
