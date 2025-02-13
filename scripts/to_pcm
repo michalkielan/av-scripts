@@ -9,22 +9,33 @@ AUDIO_CODEC=$AUDIO_CODEC_PCM_S16
 source "$(dirname "$0")/utils.sh"
 mkdir -p "${OUT_DIR}"
 
-total=$(find . -maxdepth 1 -type f -name '*${INPUT_FORMAT}' | wc -l)
+shopt -s nullglob
+files=(*."${INPUT_FORMAT}")
+total=${#files[@]}
+
+if [[ $total -eq 0 ]]; then
+	echo "Error: No files found with format '${INPUT_FORMAT}'"
+	exit 1
+fi
+
 i=1
 
-for input_file in *.${INPUT_FORMAT}; do
+for input_file in "${files[@]}"; do
 	echo "${input_file} ${i}/${total}"
 	random_string=$(gen_random_string)
 	out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${OUTPUT_FORMAT}"
 	out_file="${OUT_DIR}/${input_file}"
+
 	if ! ffmpeg \
+		-nostdin \
 		-i "${input_file}" \
 		-c:v copy \
 		-c:a ${AUDIO_CODEC} \
 		-movflags faststart \
 		-threads 0 \
+		-y \
 		"${out_file_tmp}"; then
-		echo "Error: ffmpeg failed"
+		echo "Error: ffmpeg failed for file '${input_file}'"
 		exit 1
 	fi
 
