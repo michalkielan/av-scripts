@@ -58,5 +58,10 @@ Separate vocal from audio file.
 
 `$ split_audio <audio file>`
 
+## Testing
+The tests are written using Bats (Bash Automated Testing System) framework.
+
+`$ bats tests`
+
 ## License
 [MIT](https://github.com/michalkielan/av-scripts/blob/master/LICENSE)
