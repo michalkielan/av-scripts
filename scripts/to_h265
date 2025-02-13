@@ -65,7 +65,7 @@ mkdir -p "${OUT_DIR}"
 
 for input_file in *.${IN_FORMAT}; do
 	echo "${input_file} ${i}/${total}"
-	random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
+	random_string=$(gen_random_string)
 	base_name="${input_file%.*}"
 	out_file_tmp="${OUT_DIR}/${base_name}${random_string}.tmp.${OUT_FORMAT}"
 	out_file="${OUT_DIR}/${base_name}.${OUT_FORMAT}"

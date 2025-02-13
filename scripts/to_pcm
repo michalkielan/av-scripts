@@ -5,6 +5,8 @@ OUT_DIR="."
 INPUT_FORMAT="MP4"
 OUTPUT_FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_PCM_S16
+
+source "$(dirname "$0")/utils.sh"
 mkdir -p "${OUT_DIR}"
 
 total=$(find . -maxdepth 1 -type f -name '*${INPUT_FORMAT}' | wc -l)
@@ -12,7 +14,7 @@ i=1
 
 for input_file in *.${INPUT_FORMAT}; do
 	echo "${input_file} ${i}/${total}"
-	random_string=$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 8 | head -n 1)
+	random_string=$(gen_random_string)
 	out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${OUTPUT_FORMAT}"
 	out_file="${OUT_DIR}/${input_file}"
 	if ! ffmpeg \
