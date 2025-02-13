@@ -77,7 +77,7 @@ do
         -c:a ${SELECTED_AUDIO_CODEC} \
         -b:a 320k \
         -map_metadata 0 \
-        -loglevel info \
+        -loglevel warning \
         "${out_file_tmp}"; then
     echo "Error: ffmpeg failed"
     exit 1
