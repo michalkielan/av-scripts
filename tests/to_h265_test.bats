@@ -32,5 +32,6 @@ teardown() {
 @test "Check if videos under 'h265' exists" {
 	generate_video
 	run $ORIGINAL_DIR/scripts/to_h265
+	[ "$status" -eq 0 ]
 	[ -f "h265/test.MKV" ]
 }

@@ -16,9 +16,23 @@
 
 AUDIO_CODECS_ACC=("libfdk_aac" "aac_at" "aac")
 OUT_DIR="h265"
-IN_FORMAT="MOV"
-OUT_FORMAT="MKV"
+INPUT_FORMAT="MOV"
+OUTPUT_FORMAT="MKV"
 VIDEO_HWACCEL="auto"
+VIDEO_OPTIONS=""
+
+is_hardware_supported() {
+	local hwaccel=$1
+	local video_options='-f lavfi -i nullsrc=s=176x144 -t 0.1 -f null /dev/null'
+
+	if [[ "$hwaccel" == "cuda" ]]; then
+		ffmpeg -hide_banner -init_hw_device cuda=cuda:0 $video_options &>/dev/null
+	elif [[ "$hwaccel" == "videotoolbox" ]]; then
+		ffmpeg -hide_banner -init_hw_device videotoolbox $video_options &>/dev/null
+	else
+		return 1
+	fi
+}
 
 source "$(dirname "$0")/utils.sh"
 
@@ -33,15 +47,17 @@ if [[ "$PLATFORM" == "Linux" ]]; then
     -spatial_aq 1 \
     -temporal_aq 1"
 elif [[ "$PLATFORM" == "Darwin" ]]; then
+	VIDEO_HWACCEL="videotoolbox"
 	VIDEO_CODEC="hevc_videotoolbox"
 	VIDEO_OPTIONS="-tag:v hvc1 -q:v 65"
 else
-	echo "Error: Unsupported platform - $PLATFORM"
+	echo "Error: Unsupported platform: '$PLATFORM'"
 	exit 1
 fi
 
-if ! is_encoder_supported "$VIDEO_CODEC"; then
-	echo "Error: '${VIDEO_CODEC}' not supported. Fallback to SW"
+if ! is_encoder_supported "$VIDEO_CODEC" || ! is_hardware_supported "$VIDEO_HWACCEL"; then
+	echo "Error: '${VIDEO_CODEC}' or '${VIDEO_HWACCEL}' not supported. Fallback to SW"
+	VIDEO_HWACCEL="none"
 	VIDEO_CODEC="libx265"
 	VIDEO_OPTIONS="-preset slow -crf 18"
 fi
@@ -59,16 +75,24 @@ if [ -z "$SELECTED_AUDIO_CODEC" ]; then
 	exit 1
 fi
 
-total=$(find . -maxdepth 1 -type f -name "*.${IN_FORMAT}" | wc -l)
+shopt -s nullglob
+files=(*."${INPUT_FORMAT}")
+total=${#files[@]}
+
+if [[ $total -eq 0 ]]; then
+	echo "Error: No files found with format '${INPUT_FORMAT}'"
+	exit 1
+fi
+
 i=1
 mkdir -p "${OUT_DIR}"
 
-for input_file in *.${IN_FORMAT}; do
+for input_file in "${files[@]}"; do
 	echo "${input_file} ${i}/${total}"
 	random_string=$(gen_random_string)
 	base_name="${input_file%.*}"
-	out_file_tmp="${OUT_DIR}/${base_name}${random_string}.tmp.${OUT_FORMAT}"
-	out_file="${OUT_DIR}/${base_name}.${OUT_FORMAT}"
+	out_file_tmp="${OUT_DIR}/${base_name}${random_string}.tmp.${OUTPUT_FORMAT}"
+	out_file="${OUT_DIR}/${base_name}.${OUTPUT_FORMAT}"
 
 	if ! ffmpeg \
 		-nostdin \

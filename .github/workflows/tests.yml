@@ -18,4 +18,5 @@ jobs:
         run: |
           bats tests/gen_mediainfo_test.bats
           bats tests/to_aac_test.bats
+          bats tests/to_h265_test.bats
           bats tests/to_pcm_test.bats
