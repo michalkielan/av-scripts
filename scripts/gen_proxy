@@ -17,6 +17,7 @@ FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_PCM_S16
 VIDEO_CODEC="prores_ks"
 VIDEO_OPTIONS="-profile:v 0"
+WATERMARK_PNG="$OUT_DIR/watermark.png"
 
 source "$(dirname "$0")/utils.sh"
 
@@ -30,6 +31,12 @@ fi
 
 i=1
 mkdir -p "${OUT_DIR}"
+
+ffmpeg -nostdin -y -f lavfi -i "color=c=white@0:s=400x130,format=rgba" -vf "
+  drawtext=text='Proxy':fontcolor=darkgray@0.5:fontsize=55:x=10:y=10,
+  drawtext=text='1080p, prores':fontcolor=darkgray@0.5:fontsize=55:x=10:y=70,
+  format=rgba
+" -frames:v 1 -update 1 "$WATERMARK_PNG"
 
 for input_file in "${files[@]}"; do
 	echo "${input_file} ${i}/${total}"
@@ -48,11 +55,18 @@ for input_file in "${files[@]}"; do
 	fi
 
 	if ! ffmpeg \
+		-nostdin \
+		-y \
 		-hwaccel auto \
 		-i "${input_file}" \
+		-i "$WATERMARK_PNG" \
+		-filter_complex "
+    [0:v]${SCALE}[scaled];
+    [scaled][1:v]overlay=50:main_h-overlay_h-10:format=auto,
+    format=yuv422p10le
+  " \
 		-c:v ${VIDEO_CODEC} \
 		${VIDEO_OPTIONS} \
-		-vf ${SCALE} \
 		-c:a ${AUDIO_CODEC} \
 		-map_metadata 0 \
 		-loglevel info \
@@ -64,3 +78,5 @@ for input_file in "${files[@]}"; do
 	mv "${out_file_tmp}" "${out_file}"
 	((i++))
 done
+
+rm $WATERMARK_PNG
