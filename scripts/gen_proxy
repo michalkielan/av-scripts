@@ -60,6 +60,7 @@ for input_file in "${files[@]}"; do
 		-hwaccel auto \
 		-i "${input_file}" \
 		-i "$WATERMARK_PNG" \
+		-c copy -map 0:d \
 		-filter_complex "
     [0:v]${SCALE}[scaled];
     [scaled][1:v]overlay=50:main_h-overlay_h-10:format=auto,
