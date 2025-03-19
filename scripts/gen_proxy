@@ -68,6 +68,7 @@ for input_file in "${files[@]}"; do
 		-c:v ${VIDEO_CODEC} \
 		${VIDEO_OPTIONS} \
 		-c:a ${AUDIO_CODEC} \
+		-copyts \
 		-map_metadata 0 \
 		-loglevel info \
 		"${out_file_tmp}"; then
