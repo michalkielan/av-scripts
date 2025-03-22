@@ -12,6 +12,7 @@
 
 shopt -s nullglob
 AUDIO_CODEC_PCM_S16="pcm_s16le"
+WORK_DIR="."
 OUT_DIR="proxy"
 FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_PCM_S16
@@ -30,6 +31,10 @@ if [[ $total -eq 0 ]]; then
 fi
 
 i=1
+if [ -n "$1" ]; then
+	WORK_DIR="$1"
+fi
+OUT_DIR="${WORK_DIR}/${OUT_DIR}"
 mkdir -p "${OUT_DIR}"
 
 ffmpeg -nostdin -y -f lavfi -i "color=c=white@0:s=400x130,format=rgba" -vf "

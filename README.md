@@ -44,7 +44,7 @@ Transcode audio file to AAC.
 
 Generate proxy videos for editing.
 
-`$ gen_proxy`
+`$ gen_proxy <output path (optional, default: current directory)>`
 
 Generate media info for videos.
 
