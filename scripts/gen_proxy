@@ -18,7 +18,6 @@ FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_PCM_S16
 VIDEO_CODEC="prores_ks"
 VIDEO_OPTIONS="-profile:v 0"
-WATERMARK_PNG="$OUT_DIR/watermark.png"
 
 source "$(dirname "$0")/utils.sh"
 
@@ -36,6 +35,7 @@ if [ -n "$1" ]; then
 fi
 OUT_DIR="${WORK_DIR}/${OUT_DIR}"
 mkdir -p "${OUT_DIR}"
+WATERMARK_PNG="$OUT_DIR/watermark.png"
 
 ffmpeg -nostdin -y -f lavfi -i "color=c=white@0:s=400x130,format=rgba" -vf "
   drawtext=text='Proxy':fontcolor=darkgray@0.5:fontsize=55:x=10:y=10,
