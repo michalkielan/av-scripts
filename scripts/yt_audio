@@ -18,4 +18,22 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
+UPDATE_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/yt-audio-dlp-update"
+UPDATE_INTERVAL=$((24 * 60 * 60))  # 24 hours
+
+now=$(date +%s)
+last_update=0
+
+if [[ -f "$UPDATE_CACHE" ]]; then
+    last_update=$(cat "$UPDATE_CACHE")
+fi
+
+if (( now - last_update >= UPDATE_INTERVAL )); then
+    echo "Update..."
+    if yt-dlp -U; then
+        mkdir -p "$(dirname "$UPDATE_CACHE")"
+        echo "$now" > "$UPDATE_CACHE"
+    fi
+fi
+
 yt-dlp "$1" -f ba --extract-audio --audio-format flac -o "$HOME/Music/%(title)s.%(ext)s"
