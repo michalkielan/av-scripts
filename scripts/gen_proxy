@@ -25,13 +25,13 @@ files=(*."${FORMAT}")
 total=${#files[@]}
 
 if [[ $total -eq 0 ]]; then
-	echo "Error: No files found with format '${FORMAT}'"
-	exit 1
+    echo "Error: No files found with format '${FORMAT}'"
+    exit 1
 fi
 
 i=1
 if [ -n "$1" ]; then
-	WORK_DIR="$1"
+    WORK_DIR="$1"
 fi
 OUT_DIR="${WORK_DIR}/${OUT_DIR}"
 mkdir -p "${OUT_DIR}"
@@ -44,45 +44,51 @@ ffmpeg -nostdin -y -f lavfi -i "color=c=white@0:s=400x130,format=rgba" -vf "
 " -frames:v 1 -update 1 "$WATERMARK_PNG"
 
 for input_file in "${files[@]}"; do
-	echo "${input_file} ${i}/${total}"
-	random_string=$(gen_random_string)
-	out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${FORMAT}"
-	out_file="${OUT_DIR}/${input_file}"
+    echo "${input_file} ${i}/${total}"
+    random_string=$(gen_random_string)
+    out_file_tmp="${OUT_DIR}/${input_file}${random_string}.tmp.${FORMAT}"
+    out_file="${OUT_DIR}/${input_file}"
 
-	DIMENSIONS=$(ffprobe -v error -show_entries stream=width,height -of csv=p=0 "$input_file")
-	WIDTH=$(echo "$DIMENSIONS" | cut -d ',' -f 1)
-	HEIGHT=$(echo "$DIMENSIONS" | cut -d ',' -f 2)
+    WIDTH=$(ffprobe -v error \
+        -select_streams v:0 \
+        -show_entries stream=width \
+        -of csv=p=0 "$input_file" | head -n 1)
 
-	if [ "$WIDTH" -ge "$HEIGHT" ]; then
-		SCALE="scale=1920:-2"
-	else
-		SCALE="scale=-2:1920"
-	fi
+    HEIGHT=$(ffprobe -v error \
+        -select_streams v:0 \
+        -show_entries stream=height \
+        -of csv=p=0 "$input_file" | head -n 1)
 
-	if ! ffmpeg \
-		-nostdin \
-		-y \
-		-hwaccel auto \
-		-i "${input_file}" \
-		-i "$WATERMARK_PNG" \
-		-filter_complex "
+    if [ "$WIDTH" -ge "$HEIGHT" ]; then
+        SCALE="scale=1920:-2"
+    else
+        SCALE="scale=-2:1920"
+    fi
+
+    if ! ffmpeg \
+        -nostdin \
+        -y \
+        -hwaccel auto \
+        -i "${input_file}" \
+        -i "$WATERMARK_PNG" \
+        -filter_complex "
     [0:v]${SCALE}[scaled];
     [scaled][1:v]overlay=50:main_h-overlay_h-10:format=auto,
     format=yuv422p10le
   " \
-		-c:v ${VIDEO_CODEC} \
-		${VIDEO_OPTIONS} \
-		-c:a ${AUDIO_CODEC} \
-		-map 0:t\? \
-		-map_metadata 0 \
-		-loglevel info \
-		"${out_file_tmp}"; then
-		echo "Error: ffmpeg failed"
-		exit 1
-	fi
+        -c:v ${VIDEO_CODEC} \
+        ${VIDEO_OPTIONS} \
+        -c:a ${AUDIO_CODEC} \
+        -map 0:t\? \
+        -map_metadata 0 \
+        -loglevel info \
+        "${out_file_tmp}"; then
+        echo "Error: ffmpeg failed"
+        exit 1
+    fi
 
-	mv "${out_file_tmp}" "${out_file}"
-	((i++))
+    mv "${out_file_tmp}" "${out_file}"
+    ((i++))
 done
 
 rm $WATERMARK_PNG
