@@ -17,7 +17,7 @@ OUT_DIR="proxy"
 FORMAT="MOV"
 AUDIO_CODEC=$AUDIO_CODEC_PCM_S16
 VIDEO_CODEC="prores_ks"
-VIDEO_OPTIONS="-profile:v 0"
+VIDEO_OPTIONS="-profile:v 1"
 
 source "$(dirname "$0")/utils.sh"
 
