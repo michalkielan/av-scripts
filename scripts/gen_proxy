@@ -30,9 +30,25 @@ if [[ $total -eq 0 ]]; then
 fi
 
 i=1
-if [ -n "$1" ]; then
-    WORK_DIR="$1"
+SQUEEZE=1.0
+
+for arg in "$@"; do
+    case "$arg" in
+        --squeeze=*)
+            SQUEEZE="${arg#*=}"
+            ;;
+        *)
+            WORK_DIR="$arg"
+            ;;
+    esac
+done
+
+if ! [[ "$SQUEEZE" =~ ^[0-9]+([.][0-9]+)?$ ]] \
+    || ! awk -v n="$SQUEEZE" 'BEGIN { exit !(n > 0) }'; then
+    echo "Error: --squeeze must be a positive float"
+    exit 1
 fi
+
 OUT_DIR="${WORK_DIR}/${OUT_DIR}"
 mkdir -p "${OUT_DIR}"
 WATERMARK_PNG="$OUT_DIR/watermark.png"
@@ -73,7 +89,8 @@ for input_file in "${files[@]}"; do
         -i "$WATERMARK_PNG" \
         -filter_complex "
     [0:v]${SCALE}[scaled];
-    [scaled][1:v]overlay=50:main_h-overlay_h-10:format=auto,
+    [1:v]scale=iw/${SQUEEZE}:ih[watermark];
+    [scaled][watermark]overlay=50:main_h-overlay_h-10:format=auto,
     format=yuv422p10le
   " \
         -c:v ${VIDEO_CODEC} \
